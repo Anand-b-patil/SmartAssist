@@ -4,13 +4,16 @@ from datetime import datetime, timezone
 from flask import Flask, jsonify, render_template, request
 from dotenv import load_dotenv
 
+GENAI_IMPORT_ERROR = None
+
 try:
     import google.generativeai as genai
     from google.api_core.exceptions import GoogleAPIError, InvalidArgument
-except ImportError:  # pragma: no cover - handled during startup if dependency is missing
+except Exception as exc:  # pragma: no cover - handled during startup if dependency is unavailable
     genai = None
     GoogleAPIError = Exception
     InvalidArgument = Exception
+    GENAI_IMPORT_ERROR = str(exc)
 
 load_dotenv()
 
@@ -43,7 +46,9 @@ def _build_system_instruction() -> str:
 def _configure_gemini() -> None:
     if genai is None:
         raise RuntimeError(
-            "The google-generativeai package is not installed. Run pip install -r requirements.txt."
+            "The Gemini SDK could not be imported. Install dependencies from requirements.txt "
+            "and use a supported Python runtime such as 3.11 or 3.12. "
+            f"Import error: {GENAI_IMPORT_ERROR or 'unknown error'}"
         )
     if not GEMINI_API_KEY:
         raise RuntimeError(
