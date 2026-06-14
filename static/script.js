@@ -20,6 +20,8 @@ const elements = {
   apiStatus: document.getElementById('apiStatus'),
   sidebar: document.getElementById('sidebar'),
   sidebarToggleBtn: document.getElementById('sidebarToggleBtn'),
+  mobileSidebarOpenBtn: document.getElementById('mobileSidebarOpenBtn'),
+  sidebarBackdrop: document.getElementById('sidebarBackdrop'),
 };
 
 const speechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -145,6 +147,9 @@ function renderSessions() {
       activeSessionId = session.id;
       persistSessions();
       renderApp();
+      if (window.innerWidth <= 1024) {
+        closeSidebar();
+      }
     });
     elements.chatSessions.appendChild(button);
   });
@@ -415,8 +420,26 @@ function speakLatestReply() {
   window.speechSynthesis.speak(utterance);
 }
 
+function syncSidebarState(isOpen) {
+  elements.sidebar.classList.toggle('visible-mobile', isOpen);
+  elements.sidebarBackdrop.classList.toggle('hidden', !isOpen);
+  document.body.classList.toggle('sidebar-open', isOpen);
+}
+
+function openSidebar() {
+  if (window.innerWidth > 1024) {
+    return;
+  }
+  syncSidebarState(true);
+}
+
+function closeSidebar() {
+  syncSidebarState(false);
+}
+
 function toggleSidebar() {
-  elements.sidebar.classList.toggle('hidden-mobile');
+  const isOpen = elements.sidebar.classList.contains('visible-mobile');
+  syncSidebarState(!isOpen);
 }
 
 function setupShortcuts() {
@@ -462,10 +485,12 @@ function bootstrap() {
   elements.ttsBtn.addEventListener('click', speakLatestReply);
   elements.themeToggleBtn.addEventListener('click', toggleTheme);
   elements.sidebarToggleBtn.addEventListener('click', toggleSidebar);
+  elements.mobileSidebarOpenBtn.addEventListener('click', openSidebar);
+  elements.sidebarBackdrop.addEventListener('click', closeSidebar);
 
   window.addEventListener('resize', () => {
     if (window.innerWidth > 1024) {
-      elements.sidebar.classList.remove('hidden-mobile');
+      closeSidebar();
     }
   });
 }
