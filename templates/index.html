@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SmartAssist | AI Chatbot</title>
+  <meta name="description" content="A modern ChatGPT-style AI chatbot powered by Flask and Gemini.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/styles/github-dark.min.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" id="sidebar">
+      <div class="brand">
+        <div class="brand-mark">SA</div>
+        <div>
+          <h1>SmartAssist</h1>
+          <p>Gemini-powered chat</p>
+        </div>
+      </div>
+
+      <button class="primary-btn" id="newChatBtn" type="button">New Chat</button>
+      <button class="secondary-btn" id="exportChatBtn" type="button">Export Chat as TXT</button>
+      <button class="secondary-btn" id="clearChatBtn" type="button">Clear Chat</button>
+
+      <div class="sidebar-section">
+        <div class="section-header">
+          <h2>Chats</h2>
+          <button class="icon-btn" id="sidebarToggleBtn" type="button" aria-label="Toggle sidebar">☰</button>
+        </div>
+        <div id="chatSessions" class="session-list" aria-label="Saved chats"></div>
+      </div>
+
+      <div class="sidebar-footer">
+        <p>Model: <span id="modelLabel">{{ gemini_model }}</span></p>
+        <p class="status-dot" id="apiStatus">{{ 'API ready' if api_ready else 'API key missing' }}</p>
+      </div>
+    </aside>
+
+    <main class="chat-panel">
+      <header class="chat-header">
+        <div>
+          <p class="eyebrow">Local AI Workspace</p>
+          <h2 id="activeChatTitle">New conversation</h2>
+        </div>
+        <div class="header-actions">
+          <button class="ghost-btn" id="voiceBtn" type="button">Voice Input</button>
+          <button class="ghost-btn" id="ttsBtn" type="button">Read Last Reply</button>
+          <button class="ghost-btn" id="themeToggleBtn" type="button">Dark Mode</button>
+        </div>
+      </header>
+
+      <section class="messages-wrap">
+        <div id="messages" class="messages" aria-live="polite" aria-label="Chat messages"></div>
+        <div id="typingIndicator" class="typing-indicator hidden" aria-hidden="true">
+          <span></span><span></span><span></span>
+        </div>
+      </section>
+
+      <footer class="composer">
+        <div class="composer-tools">
+          <button class="mini-btn" id="copyPromptBtn" type="button">Copy Last AI Reply</button>
+          <span class="hint">Press Enter to send, Shift+Enter for a new line</span>
+        </div>
+        <form id="chatForm" class="composer-form">
+          <textarea id="messageInput" rows="1" placeholder="Ask SmartAssist anything..."></textarea>
+          <button id="sendBtn" type="submit">Send</button>
+        </form>
+      </footer>
+    </main>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.10.0/highlight.min.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
